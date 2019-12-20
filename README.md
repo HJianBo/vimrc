@@ -12,7 +12,7 @@ git clone https://github.com/VundleVim/Vundle.vim.git  ~/.vim/bundle/Vundle.vim
 2. 配置 vimrc 文件
 ```shell
 # copy .vimrc to user dic
-cp vimrc ~/.vimrc
+curl -L -o ~/.vimrc https://raw.githubusercontent.com/zhanghongtong/vimrc/master/vimrc
 ```
 
 3. 安装已配置的插件
