@@ -4,11 +4,13 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'git://github.com/altercation/vim-colors-solarized.git'
 Plugin 'https://github.com/tomasr/molokai.git'
 "Plugin 'git://github.com/scrooloose/nerdtree.git'
+"Plugin 'https://github.com/vim-erlang/vim-erlang-tags'
 Plugin 'git://github.com/vim-erlang/vim-erlang-runtime.git'
-Plugin 'git://github.com/vim-erlang/vim-erlang-tags.git'
 Plugin 'git://github.com/vim-erlang/vim-erlang-omnicomplete.git'
-Plugin 'git://github.com/vim-erlang/vim-erlang-skeletons.git'
-Plugin 'https://github.com/ctrlpvim/ctrlp.vim'
+Plugin 'https://github.com/HJianBo/vim-erlang-skeletons'
+Plugin 'https://github.com/Yggdroot/LeaderF'
+Plugin 'https://github.com/jvirtanen/vim-hocon'
+
 call vundle#end()
 
 set nocompatible
@@ -24,6 +26,7 @@ set expandtab
 set backspace=2
 set incsearch
 set hlsearch
+set cc=80
 
 set background=dark
 if strlen(globpath(&rtp, "colors/solarized.vim")) > 0
@@ -38,20 +41,55 @@ endif
 "let NERDTreeDirArrowCollapsible = "-"
 "autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-
-" ctrl-p
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
-
-" erlang-tags
-let g:erlang_tags_ignore = ['rel', '_build']
-set tags^=~/.otp-tags
-
 " vim-erlang-omnicomplete
 set cot-=preview
 
+
+" don't show the help in normal mode
+let g:Lf_HideHelp = 1
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+" popup mode
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "DejaVu Sans Mono for Powerline" }
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
+
+let g:Lf_ShortcutF = '<C-P>'
+let g:Lf_WindowHeight = 0.37
+let g:Lf_DefaultMode = 'NameOnly'
+let g:Lf_NumberOfCache = 120
+noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+
+noremap <C-B> :<C-U><C-R>=printf("Leaderf! rg --current-buffer -e %s ", expand("<cword>"))<CR>
+noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+" search visually selected text literally
+xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
+noremap go :<C-U>Leaderf! rg --recall<CR>
+
+" should use `Leaderf gtags --update` first
+let g:Lf_GtagsAutoGenerate = 1
+let g:Lf_Gtagslabel = 'pygments'
+let g:Lf_GtagsSkipUnreadable = 1
+let g:Lf_GtagsSource = 2
+let g:Lf_GtagsfilesCmd = {
+            \ '.git': 'git ls-files --recurse-submodules|grep "erl\|hrl"',
+            \ '.hg': 'hg files',
+            \ 'default': 'rg --no-messages --files'
+            \}
+noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
+noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+let g:Lf_WildIgnore = {
+        \ 'dir': ['.svn','.git','_build','apps/emqx_dashboard/priv/www'],
+        \ 'file': ['*.beam','*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
+        \}
 
 "=====================================================================
 " Tab settings
