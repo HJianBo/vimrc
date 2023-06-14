@@ -1,17 +1,19 @@
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
+call plug#begin()
 " common plugins
-"Plugin 'https://github.com/Yggdroot/LeaderF'
-" for erlang
-Plugin 'https://github.com/HJianBo/vim-erlang-skeletons'
-Plugin 'https://github.com/vim-erlang/vim-erlang-runtime.git'
-Plugin 'https://github.com/vim-erlang/vim-erlang-omnicomplete'
-" for rust
-Plugin 'rust-lang/rust.vim'
-Plugin 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" need to install https://github.com/junegunn/fzf first
+" for examples, in macOS, brew install fzf
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
-call vundle#end()
+" for erlang
+Plug 'https://github.com/HJianBo/vim-erlang-skeletons'
+Plug 'https://github.com/vim-erlang/vim-erlang-runtime.git'
+Plug 'https://github.com/vim-erlang/vim-erlang-omnicomplete'
+" for rust
+Plug 'rust-lang/rust.vim'
+
+call plug#end()
 
 set nocompatible
 filetype plugin indent on
@@ -47,7 +49,7 @@ set nowritebackup
 
 " Having longer updatetime (default is 4000 ms = 4s) leads to noticeable
 " delays and poor user experience
-set updatetime=300
+"set updatetime=300
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved
@@ -58,3 +60,9 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+"--------------------------------------------------------------------
+" setup fzf.vim
+nmap <C-p> :GFiles<CR>
+nmap <C-\> :Files<CR>
+nmap <C-b> :Buffers<CR>
