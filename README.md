@@ -21,3 +21,21 @@ curl -L -o ~/.vimrc https://raw.githubusercontent.com/HJianBo/vimrc/master/vimrc
 :PlugIntall
 ```
 
+## 配置
+
+1. 安装 nodejs 以完成对 coc.nvim 的配置
+```
+sudo su
+curl -sL install-node.vercel.app/lts | bash
+```
+
+2. 安装 Copilot.nvim (需求 vim9)
+```
+https://github.com/github/copilot.vim#getting-started
+```
+
+Ubuntu 安装 vim9 参考：https://itsfoss.com/install-latest-vim-ubuntu/
+
+打开 vim 执行，`Copilot setup`
+
+3. 完成
