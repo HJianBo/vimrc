@@ -28,6 +28,9 @@ curl -L -o ~/.vimrc https://raw.githubusercontent.com/HJianBo/vimrc/master/vimrc
 sudo su
 curl -sL install-node.vercel.app/lts | bash
 ```
+或者使用 nvm: https://github.com/nvm-sh/nvm
+
+
 
 2. 安装 Copilot.nvim (需求 vim9)
 ```
