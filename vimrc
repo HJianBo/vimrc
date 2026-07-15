@@ -95,7 +95,26 @@ set nowritebackup
 set signcolumn=auto
 
 " GoTo code navigation
-nmap <silent> gd :call CocActionAsync('jumpDefinition', 'vsplit')<CR>
+function! JumpDefinition(error, locations) abort
+    if !empty(a:error) || empty(a:locations)
+        return
+    endif
+    if len(a:locations) != 1
+        call CocActionAsync('jumpDefinition', 'vsplit')
+        return
+    endif
+    let l:location = a:locations[0]
+    let l:uri = get(l:location, 'uri', get(l:location, 'targetUri', ''))
+    let l:path = substitute(l:uri, '^file://', '', '')
+    if l:path ==# expand('%:p')
+        let l:range = get(l:location, 'range', get(l:location, 'targetSelectionRange', {}))
+        call cursor(l:range.start.line + 1, l:range.start.character + 1)
+    else
+        call CocActionAsync('jumpDefinition', 'vsplit')
+    endif
+endfunction
+
+nmap <silent> gd :call CocActionAsync('definitions', function('JumpDefinition'))<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
