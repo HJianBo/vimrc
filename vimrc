@@ -27,6 +27,8 @@ set expandtab
 set backspace=2
 set incsearch
 set hlsearch
+set undofile
+set undodir=~/.vim/undo
 "set cc=100
 
 function! SyncTheme()
