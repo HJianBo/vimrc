@@ -137,7 +137,7 @@ function! JumpDefinition(error, locations) abort
         execute 'vsplit ' . fnameescape(l:path)
     endif
     call cursor(l:range.start.line + 1, l:range.start.character + 1)
-    redraw!
+    call timer_start(0, {-> feedkeys("\<C-l>", 'n')})
 endfunction
 
 nmap <silent> gd :call CocActionAsync('definitions', function('JumpDefinition'))<CR>
