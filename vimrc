@@ -71,6 +71,32 @@ endfunction
 
 autocmd BufEnter * call timer_start(500, {-> s:WarmErlangProject()})
 
+function! s:WarmErlangBuffer(bufnr, timer) abort
+    if bufnr('%') != a:bufnr || getbufvar(a:bufnr, 'elp_definition_warmed', 0)
+        return
+    endif
+    try
+        let l:ready = CocHasProvider('definition', a:bufnr)
+    catch
+        let l:ready = 0
+    endtry
+    if !l:ready
+        call timer_start(200, function('s:WarmErlangBuffer', [a:bufnr]))
+        return
+    endif
+    let l:line = search('^-module(', 'n')
+    if l:line == 0
+        return
+    endif
+    call setbufvar(a:bufnr, 'elp_definition_warmed', 1)
+    let l:view = winsaveview()
+    call cursor(l:line, 9)
+    call CocActionAsync('definitions')
+    call winrestview(l:view)
+endfunction
+
+autocmd BufEnter *.erl call timer_start(100, function('s:WarmErlangBuffer', [bufnr('%')]))
+
 " vim-erlang-omnicomplete
 set cot-=preview
 
