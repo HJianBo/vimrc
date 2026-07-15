@@ -39,6 +39,38 @@ endfunction
 call SyncTheme()
 autocmd FocusGained * call SyncTheme()
 
+" Prewarm ELP when Vim starts on an Erlang/rebar project directory (e.g. vim .).
+function! s:CloseWarmWindow(warm, timer) abort
+    if win_id2win(a:warm) > 0
+        call win_execute(a:warm, 'close')
+    endif
+endfunction
+
+function! s:WarmErlangProject() abort
+    if get(g:, 'elp_warm_started', 0) || !isdirectory(expand('%:p'))
+        return
+    endif
+    let l:root = get(systemlist('git -C ' . shellescape(getcwd()) . ' rev-parse --show-toplevel'), 0, '')
+    if empty(l:root) || !filereadable(l:root . '/rebar.config')
+        return
+    endif
+    let l:relative = get(systemlist('git -C ' . shellescape(l:root) . " ls-files -- '*.erl'"), 0, '')
+    if empty(l:relative)
+        return
+    endif
+    let g:elp_warm_started = 1
+    let l:current = win_getid()
+    botright vertical new
+    execute 'silent keepalt keepjumps edit ' . fnameescape(l:root . '/' . l:relative)
+    setlocal nobuflisted
+    vertical resize 1
+    let l:warm = win_getid()
+    call win_gotoid(l:current)
+    call timer_start(200, function('s:CloseWarmWindow', [l:warm]))
+endfunction
+
+autocmd BufEnter * call timer_start(500, {-> s:WarmErlangProject()})
+
 " vim-erlang-omnicomplete
 set cot-=preview
 
@@ -63,7 +95,7 @@ set nowritebackup
 set signcolumn=auto
 
 " GoTo code navigation
-nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gd :call CocActionAsync('jumpDefinition', 'vsplit')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
