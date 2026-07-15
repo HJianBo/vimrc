@@ -1,0 +1,11 @@
+{
+  "languageserver": {
+    "elp": {
+      "command": "/bin/sh",
+      "args": ["-c", "ELP_REBAR3=\"$HOME/.local/share/elp/rebar3\" exec elp server"],
+      "filetypes": ["erlang"],
+      "rootPatterns": [".git"],
+      "disabledFeatures": ["diagnostics"]
+    }
+  }
+}

@@ -36,6 +36,14 @@ curl -sL install-node.vercel.app/lts | bash
 
 2. 安装 [ELP](https://whatsapp.github.io/erlang-language-platform/docs/get-started/install/)，并确认 `elp version` 可执行
 
+   为 ELP 单独安装标准版 rebar3，避免 EMQX 定制版本号触发错误告警：
+```shell
+mkdir -p ~/.local/share/elp
+curl -fLo ~/.local/share/elp/rebar3 \
+    https://github.com/erlang/rebar3/releases/download/3.24.0/rebar3
+chmod +x ~/.local/share/elp/rebar3
+```
+
 3. 安装 Copilot.nvim (需求 vim9)
 ```
 https://github.com/github/copilot.vim#getting-started
