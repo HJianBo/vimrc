@@ -134,7 +134,7 @@ function! JumpDefinition(error, locations) abort
     let l:path = substitute(substitute(l:uri, '^file://', '', ''), '%20', ' ', 'g')
     let l:range = get(l:location, 'range', get(l:location, 'targetSelectionRange', {}))
     if l:path !=# expand('%:p')
-        execute 'vsplit ' . fnameescape(l:path)
+        execute 'belowright vsplit ' . fnameescape(l:path)
     endif
     call cursor(l:range.start.line + 1, l:range.start.character + 1)
     call timer_start(0, {-> feedkeys("\<C-l>", 'n')})
