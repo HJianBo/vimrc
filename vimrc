@@ -105,13 +105,12 @@ function! JumpDefinition(error, locations) abort
     endif
     let l:location = a:locations[0]
     let l:uri = get(l:location, 'uri', get(l:location, 'targetUri', ''))
-    let l:path = substitute(l:uri, '^file://', '', '')
-    if l:path ==# expand('%:p')
-        let l:range = get(l:location, 'range', get(l:location, 'targetSelectionRange', {}))
-        call cursor(l:range.start.line + 1, l:range.start.character + 1)
-    else
-        call CocActionAsync('jumpDefinition', 'vsplit')
+    let l:path = substitute(substitute(l:uri, '^file://', '', ''), '%20', ' ', 'g')
+    let l:range = get(l:location, 'range', get(l:location, 'targetSelectionRange', {}))
+    if l:path !=# expand('%:p')
+        execute 'vsplit ' . fnameescape(l:path)
     endif
+    call cursor(l:range.start.line + 1, l:range.start.character + 1)
 endfunction
 
 nmap <silent> gd :call CocActionAsync('definitions', function('JumpDefinition'))<CR>
