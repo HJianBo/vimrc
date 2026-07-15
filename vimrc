@@ -27,10 +27,17 @@ set expandtab
 set backspace=2
 set incsearch
 set hlsearch
-set cc=100
+"set cc=100
 
-set background=dark
-colorscheme murphy
+function! SyncTheme()
+    let l:scheme = system('gsettings get org.gnome.desktop.interface color-scheme') =~# 'prefer-dark' ? 'habamax' : 'delek'
+    if get(g:, 'colors_name', '') !=# l:scheme
+        execute 'colorscheme ' . l:scheme
+    endif
+endfunction
+
+call SyncTheme()
+autocmd FocusGained * call SyncTheme()
 
 " vim-erlang-omnicomplete
 set cot-=preview
@@ -53,7 +60,7 @@ set nowritebackup
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved
-set signcolumn=yes
+set signcolumn=auto
 
 " GoTo code navigation
 nmap <silent> gd <Plug>(coc-definition)
@@ -68,6 +75,13 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
 
 "--------------------------------------------------------------------
 " setup fzf.vim
-nmap <C-p> :GFiles<CR>
+function! FzfProjectFiles()
+    let l:root = systemlist('git rev-parse --show-toplevel')[0]
+    call fzf#vim#files(l:root, fzf#vim#with_preview({
+                \ 'source': 'git ls-files -z; find _build/default/lib -type f -print0 2>/dev/null',
+                \ 'options': '--read0'
+                \ }))
+endfunction
+nmap <C-p> :call FzfProjectFiles()<CR>
 nmap <C-\> :Files<CR>
 nmap <C-b> :Buffers<CR>
