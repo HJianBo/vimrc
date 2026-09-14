@@ -31,15 +31,30 @@ set undofile
 set undodir=~/.vim/undo
 "set cc=100
 
-function! SyncTheme()
-    let l:scheme = system('gsettings get org.gnome.desktop.interface color-scheme') =~# 'prefer-dark' ? 'habamax' : 'delek'
-    if get(g:, 'colors_name', '') !=# l:scheme
-        execute 'colorscheme ' . l:scheme
+function! SyncTheme() abort
+    let l:scheme = ''
+
+    if has('macunix') || has('mac')
+        " macOS dark mode returns "Dark"; light mode usually has no value.
+        let l:scheme = system('defaults read -g AppleInterfaceStyle 2>/dev/null') =~# '\<Dark\>' ? 'habamax' : 'delek'
+    elseif executable('gsettings')
+        let l:appearance = system('gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null')
+        if v:shell_error == 0
+            let l:scheme = l:appearance =~# 'prefer-dark' ? 'habamax' : 'delek'
+        endif
+    endif
+
+    if !empty(l:scheme) && get(g:, 'colors_name', '') !=# l:scheme
+        execute 'colorscheme ' . fnameescape(l:scheme)
     endif
 endfunction
 
 call SyncTheme()
-autocmd FocusGained * call SyncTheme()
+
+augroup sync_theme
+    autocmd!
+    autocmd FocusGained * call SyncTheme()
+augroup END
 
 " Prewarm ELP when Vim starts on an Erlang/rebar project directory (e.g. vim .).
 function! s:CloseWarmWindow(warm, timer) abort
